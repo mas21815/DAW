@@ -74,14 +74,14 @@ begin
 return @name;
 end;
 
-
--- Api_entity_set_name ***
-Create Procedure api_entity_set_name(@id INT,name varchar(100))
+-- Api_entity_set_name 
+Create Procedure api_entity_set_name(@id INT,@name varchar(100))
 as
 begin
+	update Entities
+	set name = @name where IdEntitie = @id
 
 end;
-
 
 -- Api_entity_get_json **?
 create function api_entity_get_json(@id int, RETURNS nvarchar(2000) )
