@@ -101,8 +101,36 @@ end;
 create procedure test_entity_get_id
 as
 begin
-	declare @id0
-	set @id0 = dbo.api_entity_get_ids(@name = 'juanx')
-	
+	declare @id0 int;
+	declare @name varchar(100);
+	set @name = dbo.test_get_entity_unused_name();
+	set @id0 = dbo.api_entity_get_id(@name);
+	declare @id1 int;
+	exec api_entity_add @name, @IsProvider=true,@IsConsumer=true,@IsPerson=false,@entity_id=@id1 OUTPUT;
+	declare @id2 int;
+	set @id2 = dbo.api_entity_get_id(@name);
 
+	if @id0 <> null
+		raiserror('test_entity_get_id',18,1);
+	if @id1 <> @id2
+		raiserror('test_entity_get_id',18,1);
+	if @id2 = null
+		raiserror('test_entity_get_id',18,1);
+
+end;
+
+drop procedure test_get_entity_unused_name
+create procedure test_get_entity_unused_name
+as
+begin
+	declare @name varchar(100);
+	declare @tryname varchar(100) = 'pwpw';
+	while @name is null
+	begin
+		if not exists (select * from Entities where name like @tryname)
+			begin
+				set @name = @tryname;
+			end;
+	end; 
+	return @name
 end;
